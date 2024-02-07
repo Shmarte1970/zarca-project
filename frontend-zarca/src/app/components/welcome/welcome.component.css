@@ -1,0 +1,10 @@
+.centered-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Ajusta la altura como desees */
+  }
+  
+  h1 {
+    color: #1565c0; /* Color de texto, un tono oscuro de azul */
+  }
