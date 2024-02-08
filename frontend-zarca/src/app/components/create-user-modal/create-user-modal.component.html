@@ -193,7 +193,7 @@
                   id="city"
                   class="form-select"
                   formControlName="cityId"
-                  (change)="enablePostcode()"
+                  (change)="getPostcodes()"
                 >
                   <option value="" disabled style="display: none"></option>
                   @for (city of cities; track city.id) {
@@ -213,11 +213,26 @@
 
             <fieldset class="form-group mb-3">
               <label for="postcode">Código Postal</label>
-              <input
-                id="postcode"
-                class="form-control"
-                formControlName="postcode"
-              />
+              <div class="input-group">
+                <select
+                  id="postcode"
+                  class="form-select"
+                  formControlName="postcodeId"
+                >
+                  <option value="" disabled style="display: none"></option>
+                  @for (postcode of postcodes; track postcode.id) {
+                  <option [value]="postcode.id">{{ postcode.postcode }}</option>
+                  }
+                </select>
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  (click)="openPostcodeForm()"
+                  [disabled]="postcodeId.disabled"
+                >
+                  + añadir
+                </button>
+              </div>
             </fieldset>
           </div>
         </div>
@@ -368,6 +383,47 @@
         </button>
         <button class="btn btn-primary w-50 mt-3" [disabled]="cityForm.invalid">
           Crear Ciudad
+        </button>
+      </div>
+    </form>
+
+    <h2 [style.display]="showPostcodeForm ? '' : 'none'" class="mb-4">
+      Nuevo Código Postal
+    </h2>
+    <form
+      [style.display]="showPostcodeForm ? '' : 'none'"
+      class="h-100"
+      [formGroup]="postcodeForm"
+      (submit)="postPostcode()"
+    >
+      <div class="overflow-auto h-75 pe-4">
+        <fieldset class="form-group mb-3">
+          <label for="newPostcode">Código Postal</label>
+          <input
+            id="newPostcode"
+            class="form-control"
+            placeholder="Código Postal"
+            formControlName="postcode"
+          />
+          @if (newPostcode.invalid && newPostcode.touched) {
+          <p class="text-danger">Código Postal es un campo obligatorio</p>
+          }
+        </fieldset>
+      </div>
+
+      <div class="input-group">
+        <button
+          type="button"
+          class="btn btn-secondary w-50 mt-3"
+          (click)="openUserForm()"
+        >
+          Cancelar
+        </button>
+        <button
+          class="btn btn-primary w-50 mt-3"
+          [disabled]="postcodeForm.invalid"
+        >
+          Crear Código Postal
         </button>
       </div>
     </form>

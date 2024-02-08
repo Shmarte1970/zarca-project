@@ -45,7 +45,7 @@ export class CreateUserModalComponent implements OnInit, AfterViewInit {
   countryId: FormControl = new FormControl('');
   provinceId: FormControl = new FormControl({ value: '', disabled: true });
   cityId: FormControl = new FormControl({ value: '', disabled: true });
-  postcode: FormControl = new FormControl({ value: '', disabled: true });
+  postcodeId: FormControl = new FormControl({ value: '', disabled: true });
   userRoles: FormControl = new FormControl('');
 
   specialities: any = [];
@@ -53,6 +53,7 @@ export class CreateUserModalComponent implements OnInit, AfterViewInit {
   countries: any = [];
   provinces: any = [];
   cities: any = [];
+  postcodes: any = [];
 
   roles: any = [];
 
@@ -67,6 +68,10 @@ export class CreateUserModalComponent implements OnInit, AfterViewInit {
   cityForm: FormGroup;
   newCityName: FormControl = new FormControl('', Validators.required);
   showCityForm: boolean = false;
+
+  postcodeForm: FormGroup;
+  newPostcode: FormControl = new FormControl('', Validators.required);
+  showPostcodeForm: boolean = false;
 
   showUserForm: boolean = true;
 
@@ -87,7 +92,7 @@ export class CreateUserModalComponent implements OnInit, AfterViewInit {
       countryId: this.countryId,
       provinceId: this.provinceId,
       cityId: this.cityId,
-      postcode: this.postcode,
+      postcodeId: this.postcodeId,
       userRoles: this.userRoles,
     });
 
@@ -103,6 +108,10 @@ export class CreateUserModalComponent implements OnInit, AfterViewInit {
     this.cityForm = new FormGroup({
       name: this.newCityName,
       provinceId: this.provinceId,
+    });
+
+    this.postcodeForm = new FormGroup({
+      postcode: this.newPostcode,
     });
   }
 
@@ -242,7 +251,7 @@ export class CreateUserModalComponent implements OnInit, AfterViewInit {
         this.toastr.success('Ciudad creada con éxito');
         this.getCities();
         this.cityId.setValue(newCity.id);
-        this.postcode.enable();
+        this.postcodeId.enable();
         this.showCityForm = false;
         this.showUserForm = true;
       },
@@ -258,8 +267,42 @@ export class CreateUserModalComponent implements OnInit, AfterViewInit {
     this.showUserForm = false;
   }
 
+  getPostcodes() {
+    this.postcodeId.enable();
+    this.userService.getPostcodes().subscribe({
+      next: (data) => {
+        this.postcodes = data.entities;
+      },
+      error: (e) => {
+        console.log(e);
+        this.toastr.warning('No se han podido obtener los códigos postales');
+      },
+    });
+  }
+
+  postPostcode() {
+    this.userService.postPostcode(this.postcodeForm.value).subscribe({
+      next: (newPostcode) => {
+        this.toastr.success('Código Postal creado con éxito');
+        this.getPostcodes();
+        this.postcodeId.setValue(newPostcode.id);
+        this.showPostcodeForm = false;
+        this.showUserForm = true;
+      },
+      error: (e) => {
+        console.log(e);
+        this.toastr.warning('No se ha podido crear el código postal');
+      },
+    });
+  }
+
+  openPostcodeForm() {
+    this.showPostcodeForm = true;
+    this.showUserForm = false;
+  }
+
   enablePostcode() {
-    this.postcode.enable();
+    this.postcodeId.enable();
   }
 
   getRoles() {

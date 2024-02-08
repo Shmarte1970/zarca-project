@@ -7,8 +7,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class UserService {
   // private readonly API_URL = environment.API_URL;  // linea para deploy
-  //private readonly API_URL = 'http://localhost:8080/api/v1';    // habilitar esta linea para Jarko y para mi en local 
-  private readonly API_URL = 'http://192.168.0.16:8080/api/v1';  // habilitar esta linea para el trabajo en el servidor del erp
+  private readonly API_URL = 'http://localhost:8080/api/v1'; // habilitar esta linea para Jarko y para mi en local
+  // private readonly API_URL = 'http://192.168.0.16:8080/api/v1';  // habilitar esta linea para el trabajo en el servidor del erp
   private token = '';
   private options = {};
   public currentUser: any | null = null;
@@ -109,10 +109,10 @@ export class UserService {
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
 
-    queryString += "&orderBy=" + order;
-    if(direction) queryString += "&orderDir=ASC";
-    else if(!direction) queryString += "&orderDir=DESC";
-    
+    queryString += '&orderBy=' + order;
+    if (direction) queryString += '&orderDir=ASC';
+    else if (!direction) queryString += '&orderDir=DESC';
+
     return this.http.get<any>(
       `${this.API_URL}/users?` + queryString,
       this.options
@@ -168,6 +168,16 @@ export class UserService {
 
   postCity(body: any) {
     return this.http.post<any>(`${this.API_URL}/cities`, body, this.options);
+  }
+
+  /******************************** POSTCODES ********************************/
+
+  getPostcodes() {
+    return this.http.get<any>(`${this.API_URL}/postcodes`, this.options);
+  }
+
+  postPostcode(body: any) {
+    return this.http.post<any>(`${this.API_URL}/postcodes`, body, this.options);
   }
 
   /********************************** ROLES **********************************/

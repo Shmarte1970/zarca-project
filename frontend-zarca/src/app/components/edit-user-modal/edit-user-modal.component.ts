@@ -46,7 +46,7 @@ export class EditUserModalComponent implements OnInit, AfterViewInit {
   countryId: FormControl = new FormControl('');
   provinceId: FormControl = new FormControl('');
   cityId: FormControl = new FormControl('');
-  postcode: FormControl = new FormControl('');
+  postcodeId: FormControl = new FormControl('');
   userRoles: FormControl = new FormControl('');
 
   specialities: any = [];
@@ -54,6 +54,7 @@ export class EditUserModalComponent implements OnInit, AfterViewInit {
   countries: any = [];
   provinces: any = [];
   cities: any = [];
+  postcodes: any = [];
 
   roles: any = [];
 
@@ -68,6 +69,10 @@ export class EditUserModalComponent implements OnInit, AfterViewInit {
   cityForm: FormGroup;
   newCityName: FormControl = new FormControl('', Validators.required);
   showCityForm: boolean = false;
+
+  postcodeForm: FormGroup;
+  newPostcode: FormControl = new FormControl('', Validators.required);
+  showPostcodeForm: boolean = false;
 
   showUserForm: boolean = true;
 
@@ -86,7 +91,7 @@ export class EditUserModalComponent implements OnInit, AfterViewInit {
       countryId: this.countryId,
       provinceId: this.provinceId,
       cityId: this.cityId,
-      postcode: this.postcode,
+      postcodeId: this.postcodeId,
       userRoles: this.userRoles,
     });
 
@@ -103,6 +108,10 @@ export class EditUserModalComponent implements OnInit, AfterViewInit {
       name: this.newCityName,
       provinceId: this.provinceId,
     });
+
+    this.postcodeForm = new FormGroup({
+      postcode: this.newPostcode,
+    });
   }
 
   ngOnInit(): void {
@@ -111,6 +120,7 @@ export class EditUserModalComponent implements OnInit, AfterViewInit {
     this.getCountries();
     this.getProvinces();
     this.getCities();
+    this.getPostcodes();
     this.getRoles();
 
     // Get roles from user in array format
@@ -131,7 +141,7 @@ export class EditUserModalComponent implements OnInit, AfterViewInit {
       countryId: this.selectedUser.country?.id || '',
       provinceId: this.selectedUser.province?.id || '',
       cityId: this.selectedUser.city?.id || '',
-      postcode: this.selectedUser.postcode,
+      postcodeId: this.selectedUser.postcode?.id || '',
       userRoles: modelUserRoles,
     });
   }
@@ -266,7 +276,7 @@ export class EditUserModalComponent implements OnInit, AfterViewInit {
         this.toastr.success('Ciudad creada con éxito');
         this.getCities();
         this.cityId.setValue(newCity.id);
-        this.postcode.enable();
+        this.postcodeId.enable();
         this.showCityForm = false;
         this.showUserForm = true;
       },
@@ -282,8 +292,42 @@ export class EditUserModalComponent implements OnInit, AfterViewInit {
     this.showUserForm = false;
   }
 
+  getPostcodes() {
+    this.postcodeId.enable();
+    this.userService.getPostcodes().subscribe({
+      next: (data) => {
+        this.postcodes = data.entities;
+      },
+      error: (e) => {
+        console.log(e);
+        this.toastr.warning('No se han podido obtener los códigos postales');
+      },
+    });
+  }
+
+  postPostcode() {
+    this.userService.postPostcode(this.postcodeForm.value).subscribe({
+      next: (newPostcode) => {
+        this.toastr.success('Código Postal creado con éxito');
+        this.getPostcodes();
+        this.postcodeId.setValue(newPostcode.id);
+        this.showPostcodeForm = false;
+        this.showUserForm = true;
+      },
+      error: (e) => {
+        console.log(e);
+        this.toastr.warning('No se ha podido crear el código postal');
+      },
+    });
+  }
+
+  openPostcodeForm() {
+    this.showPostcodeForm = true;
+    this.showUserForm = false;
+  }
+
   enablePostcode() {
-    this.postcode.enable();
+    this.postcodeId.enable();
   }
 
   getRoles() {
